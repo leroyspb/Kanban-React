@@ -1,0 +1,60 @@
+.footer {
+    background-color: white;
+    padding: 20px 30px;
+    margin-top: 30px;
+    border-radius: 8px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+}
+
+.stats {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.statItem {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.statLabel {
+    color: #6c757d;
+    font-weight: 400;
+}
+
+.statValue {
+    color: #2c3e50;
+    font-weight: 600;
+    background-color: #f1f3f5;
+    padding: 2px 8px;
+    border-radius: 12px;
+    min-width: 24px;
+    text-align: center;
+}
+
+.divider {
+    color: #ced4da;
+    font-size: 12px;
+}
+
+.copyright {
+    color: #adb5bd;
+}
+
+.author {
+    color: #495057;
+    font-weight: 500;
+}
+
+@media (max-width: 600px) {
+    .footer {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+}
