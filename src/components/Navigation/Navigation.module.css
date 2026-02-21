@@ -1,0 +1,10 @@
+.navigation {
+    box-sizing: border-box;
+    background: #0067A3;
+    padding-left: 14px;
+    color: #FFFFFF;
+}
+
+.img_auth {
+    gap: 30px;
+}
