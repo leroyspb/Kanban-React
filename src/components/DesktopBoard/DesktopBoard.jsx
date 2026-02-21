@@ -5,10 +5,26 @@ import Footer from '../Footer/Footer';
 import TaskModal from '../TaskModal/TaskModal';
 import useBoardStore from '../../store/boardStore';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import {useState} from "react";
+import {useEffect} from "react";
+import Navigation from "../Navigation/Navigation";
 
 const DesktopBoard = () => {
     const { columns, moveTask, moveColumn } = useBoardStore();
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+    const handleClearStorage = () => {
+        localStorage.removeItem('kanban-board-storage');
+        window.location.reload(); // Перезагрузить страницу
+    };
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }, []);
     const activeTasks = columns.reduce((acc, col) =>
         col.id !== 'finished' ? acc + col.tasks.length : acc, 0
     );
@@ -20,7 +36,7 @@ const DesktopBoard = () => {
 
         if (!destination) return;
 
-        if (type === 'column') {
+        if (type === 'column' && !isMobile) {
             moveColumn(source.index, destination.index);
             return;
         }
@@ -38,20 +54,18 @@ const DesktopBoard = () => {
 
     return (
         <>
+            <Navigation></Navigation>
             <DragDropContext onDragEnd={handleDragEnd}>
                 <div className={styles.board}>
-                    <header className={styles.header}>
-                        <h1>Awesome Kanban Board</h1>
-                    </header>
 
                     <Droppable
                         droppableId="all-columns"
-                        direction="horizontal"
+                        direction={isMobile ? "vertical" : "horizontal"}
                         type="column"
                     >
                         {(provided) => (
                             <div
-                                className={styles.columnsContainer}
+                                className={`${styles.columnsContainer} ${isMobile ? styles.mobile : ''}`}
                                 ref={provided.innerRef}
                                 {...provided.droppableProps}
                             >
@@ -60,6 +74,7 @@ const DesktopBoard = () => {
                                         key={column.id}
                                         column={column}
                                         index={index}
+                                        isMobile={isMobile}
                                     />
                                 ))}
                                 {provided.placeholder}

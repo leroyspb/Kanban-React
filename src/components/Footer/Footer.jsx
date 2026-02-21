@@ -3,7 +3,7 @@ import styles from './Footer.module.css';
 
 const Footer = ({ activeTasks, finishedTasks }) => {
     const currentYear = new Date().getFullYear();
-    const authorName = "Your Name";
+    const authorName = "leroyspb";
 
     return (
         <footer className={styles.footer}>
@@ -22,7 +22,7 @@ const Footer = ({ activeTasks, finishedTasks }) => {
             </div>
 
             <div className={styles.copyright}>
-                Kanban board by <span className={styles.author}>{authorName}</span>, {currentYear}
+                Kanban board by {authorName}, {currentYear}
             </div>
         </footer>
     );

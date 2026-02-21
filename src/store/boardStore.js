@@ -1,3 +1,4 @@
+// src/store/boardStore.js
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { initialColumns } from '../data/mockData';
@@ -5,10 +6,12 @@ import { initialColumns } from '../data/mockData';
 const useBoardStore = create(
     persist(
         (set, get) => ({
-            columns: initialColumns,
+            columns: initialColumns, // Начальные данные (используются если в localStorage ничего нет)
 
-            // Добавление задачи
+            // Добавление новой задачи в Backlog
             addTask: (columnId, taskTitle) => {
+                if (!taskTitle.trim()) return;
+
                 set((state) => ({
                     columns: state.columns.map(col =>
                         col.id === columnId
@@ -16,10 +19,11 @@ const useBoardStore = create(
                                 ...col,
                                 tasks: [...col.tasks, {
                                     id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                                    title: taskTitle,
+                                    title: taskTitle.trim(),
                                     description: '',
-                                    completed: columnId === 'finished',
-                                    priority: 'medium'
+                                    completed: false,
+                                    priority: 'medium',
+                                    createdAt: new Date().toISOString()
                                 }]
                             }
                             : col
@@ -27,34 +31,100 @@ const useBoardStore = create(
                 }));
             },
 
-            // Перемещение задачи
-            moveTask: (taskId, sourceColId, destColId, sourceIndex, destIndex) => {
+            // Перемещение задачи из Backlog в Ready
+            moveFromBacklogToReady: (taskId) => {
                 set((state) => {
-                    const sourceColumn = state.columns.find(col => col.id === sourceColId);
-                    const destColumn = state.columns.find(col => col.id === destColId);
+                    const backlogColumn = state.columns.find(col => col.id === 'backlog');
+                    const readyColumn = state.columns.find(col => col.id === 'ready');
 
-                    if (!sourceColumn || !destColumn) return state;
+                    if (!backlogColumn || !readyColumn) return state;
 
-                    const taskCopy = { ...sourceColumn.tasks[sourceIndex] };
+                    const taskIndex = backlogColumn.tasks.findIndex(t => t.id === taskId);
+                    if (taskIndex === -1) return state;
 
-                    // Обновляем статус completed при перемещении
-                    if (destColId === 'finished') {
-                        taskCopy.completed = true;
-                    } else if (sourceColId === 'finished') {
-                        taskCopy.completed = false;
-                    }
+                    const taskToMove = { ...backlogColumn.tasks[taskIndex] };
 
                     const newColumns = state.columns.map(col => {
-                        if (col.id === sourceColId) {
+                        if (col.id === 'backlog') {
                             return {
                                 ...col,
-                                tasks: col.tasks.filter((_, idx) => idx !== sourceIndex)
+                                tasks: col.tasks.filter(t => t.id !== taskId)
                             };
                         }
-                        if (col.id === destColId) {
-                            const newTasks = [...col.tasks];
-                            newTasks.splice(destIndex, 0, taskCopy);
-                            return { ...col, tasks: newTasks };
+                        if (col.id === 'ready') {
+                            return {
+                                ...col,
+                                tasks: [...col.tasks, taskToMove]
+                            };
+                        }
+                        return col;
+                    });
+
+                    return { columns: newColumns };
+                });
+            },
+
+            // Перемещение задачи из Ready в In Progress
+            moveFromReadyToInProgress: (taskId) => {
+                set((state) => {
+                    const readyColumn = state.columns.find(col => col.id === 'ready');
+                    const inProgressColumn = state.columns.find(col => col.id === 'inProgress');
+
+                    if (!readyColumn || !inProgressColumn) return state;
+
+                    const taskIndex = readyColumn.tasks.findIndex(t => t.id === taskId);
+                    if (taskIndex === -1) return state;
+
+                    const taskToMove = { ...readyColumn.tasks[taskIndex] };
+
+                    const newColumns = state.columns.map(col => {
+                        if (col.id === 'ready') {
+                            return {
+                                ...col,
+                                tasks: col.tasks.filter(t => t.id !== taskId)
+                            };
+                        }
+                        if (col.id === 'inProgress') {
+                            return {
+                                ...col,
+                                tasks: [...col.tasks, taskToMove]
+                            };
+                        }
+                        return col;
+                    });
+
+                    return { columns: newColumns };
+                });
+            },
+
+            // Перемещение задачи из In Progress в Finished
+            moveFromInProgressToFinished: (taskId) => {
+                set((state) => {
+                    const inProgressColumn = state.columns.find(col => col.id === 'inProgress');
+                    const finishedColumn = state.columns.find(col => col.id === 'finished');
+
+                    if (!inProgressColumn || !finishedColumn) return state;
+
+                    const taskIndex = inProgressColumn.tasks.findIndex(t => t.id === taskId);
+                    if (taskIndex === -1) return state;
+
+                    const taskToMove = {
+                        ...inProgressColumn.tasks[taskIndex],
+                        completed: true
+                    };
+
+                    const newColumns = state.columns.map(col => {
+                        if (col.id === 'inProgress') {
+                            return {
+                                ...col,
+                                tasks: col.tasks.filter(t => t.id !== taskId)
+                            };
+                        }
+                        if (col.id === 'finished') {
+                            return {
+                                ...col,
+                                tasks: [...col.tasks, taskToMove]
+                            };
                         }
                         return col;
                     });
@@ -93,10 +163,26 @@ const useBoardStore = create(
                     newColumns.splice(destIndex, 0, movedColumn);
                     return { columns: newColumns };
                 });
+            },
+
+            // Сброс к начальным данным (опционально)
+            resetToInitial: () => {
+                set({ columns: initialColumns });
+            },
+
+            // Очистка всех задач (опционально)
+            clearAllTasks: () => {
+                set((state) => ({
+                    columns: state.columns.map(col => ({
+                        ...col,
+                        tasks: []
+                    }))
+                }));
             }
         }),
         {
-            name: 'kanban-board-storage',
+            name: 'kanban-board-storage', // Ключ в localStorage
+            getStorage: () => localStorage, // Используем localStorage (по умолчанию)
         }
     )
 );
