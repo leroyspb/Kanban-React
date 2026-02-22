@@ -1,5 +1,4 @@
-// src/components/Column/Column.jsx
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styles from './Column.module.css';
 import TaskList from '../TaskList/TaskList';
 import AddCardForm from '../AddCardForm/AddCardForm';
@@ -20,7 +19,10 @@ const Column = ({ column }) => {
     const getSourceTasks = () => {
         switch(column.id) {
             case 'ready':
-                return columns.find(col => col.id === 'backlog')?.tasks || [];
+                // Получаем все задачи из Backlog
+                const backlogTasks = columns.find(col => col.id === 'backlog')?.tasks || [];
+                console.log('Backlog tasks for Ready:', backlogTasks); // Проверка
+                return backlogTasks;
             case 'inProgress':
                 return columns.find(col => col.id === 'ready')?.tasks || [];
             case 'finished':
@@ -58,13 +60,14 @@ const Column = ({ column }) => {
 
         // Для остальных колонок открываем дропдаун, если есть задачи в источнике
         if (!isSourceEmpty && moveFunction) {
+            console.log('Opening dropdown with tasks:', sourceTasks); // Проверка
             setShowDropdown(true);
         }
-        // Если источник пуст - ничего не делаем (кнопка disabled)
     };
 
     // Обработчик выбора задачи из дропдауна
     const handleSelectTask = (taskId) => {
+        console.log('Selected task:', taskId); // Проверка
         if (moveFunction) {
             moveFunction(taskId);
             setShowDropdown(false);
@@ -80,9 +83,6 @@ const Column = ({ column }) => {
             <div className={styles.columnHeader}>
                 <span className={styles.columnTitle}>
                     {column.title}
-                </span>
-                <span className={styles.taskCount}>
-                    {column.tasks.length}
                 </span>
             </div>
 
@@ -127,7 +127,7 @@ const Column = ({ column }) => {
                     onClick={handleAddClick}
                     disabled={column.id !== 'backlog' && isSourceEmpty}
                 >
-                    + Add card
+                    Add card
                 </button>
             )}
         </div>

@@ -1,85 +1,56 @@
 .taskItem {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 12px 16px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
     background-color: white;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    margin-bottom: 6px;
     border: 1px solid #e2e8f0;
-    transition: all 0.2s;
     cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .taskItem:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    border-color: #cbd5e0;
-    transform: translateY(-1px);
-}
-
-.taskItem.completed {
-    opacity: 0.7;
     background-color: #f8fafc;
-}
-
-.taskItem.completed .taskTitle {
-    text-decoration: line-through;
-    color: #94a3b8;
-}
-
-.dragHandle {
-    color: #cbd5e0;
-    cursor: grab;
-    display: flex;
-    align-items: center;
-    padding: 4px;
-}
-
-.dragHandle:active {
-    cursor: grabbing;
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .taskTitle {
-    flex: 1;
+    font-size: 18px;
     color: #2c3e50;
     word-break: break-word;
+    line-height: 1.4;
+    flex: 1;
+    margin-right: 10px;
 }
 
-.priority {
-    font-size: 12px;
-    margin-right: 4px;
-}
-
-.taskActions {
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.taskItem:hover .taskActions {
-    opacity: 1;
-}
-
-.iconButton {
+.deleteButton {
     background: none;
     border: none;
-    padding: 4px;
-    cursor: pointer;
     color: #94a3b8;
+    cursor: pointer;
+    padding: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 4px;
     transition: all 0.2s;
+    opacity: 0;
 }
 
-.iconButton:hover {
-    background-color: #f1f5f9;
-    color: #475569;
+.taskItem:hover .deleteButton {
+    opacity: 1;
 }
 
-.iconButton:active {
-    transform: scale(0.95);
+.deleteButton:hover {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.deleteButton:active {
+    transform: scale(0.9);
 }

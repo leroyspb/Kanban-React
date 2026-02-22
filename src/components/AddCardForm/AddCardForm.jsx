@@ -1,4 +1,3 @@
-// src/components/AddCardForm/AddCardForm.jsx
 import React, { useState } from 'react';
 import styles from './AddCardForm.module.css';
 import useBoardStore from '../../store/boardStore';
@@ -57,7 +56,6 @@ const AddCardForm = ({ columnId, onSave, onCancel }) => {
     );
 };
 
-console.log('Данные из store:', useBoardStore.getState().columns);
 console.log('Данные из localStorage:', localStorage.getItem('kanban-board-storage'));
 
 export default AddCardForm;

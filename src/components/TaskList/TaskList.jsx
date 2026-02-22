@@ -13,11 +13,10 @@ const TaskList = ({ tasks }) => {
 
     return (
         <div className={styles.taskList}>
-            {tasks.map((task, index) => (
+            {tasks.map((task) => (
                 <TaskItem
                     key={task.id}
                     task={task}
-                    index={index}
                 />
             ))}
         </div>

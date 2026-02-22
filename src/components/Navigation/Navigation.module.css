@@ -1,10 +1,98 @@
 .navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     box-sizing: border-box;
     background: #0067A3;
-    padding-left: 14px;
+    padding: 0 14px 0 16px;
     color: #FFFFFF;
+    height: 55px;
+    position: relative;
+    z-index: 10;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 400;
+}
+
+.userSection {
+    display: flex;
+    align-items: center;
+    position: relative;
 }
 
 .img_auth {
-    gap: 30px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
 }
+
+
+
+.chevronButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Выпадающее меню */
+.dropdownMenu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 150px;
+    z-index: 1000;
+
+}
+
+/* Треугольник сверху к меню авторизации*/
+.dropdownMenu:before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 40px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
+
+}
+
+.dropdownItem {
+    width: 100%;
+    padding: 8px 7px;
+    border: none;
+    background: white;
+    color: #333;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dropdownItem:hover {
+    background: #f5f5f5;
+}
+
+/* Анимация для шеврона */
+.chevronDown {
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+}
+
+.chevronUp {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+

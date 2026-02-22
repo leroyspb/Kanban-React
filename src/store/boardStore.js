@@ -33,16 +33,25 @@ const useBoardStore = create(
 
             // Перемещение задачи из Backlog в Ready
             moveFromBacklogToReady: (taskId) => {
+                console.log('Moving task from Backlog to Ready:', taskId); // Проверка
+
                 set((state) => {
                     const backlogColumn = state.columns.find(col => col.id === 'backlog');
                     const readyColumn = state.columns.find(col => col.id === 'ready');
 
-                    if (!backlogColumn || !readyColumn) return state;
+                    if (!backlogColumn || !readyColumn) {
+                        console.log('Columns not found');
+                        return state;
+                    }
 
                     const taskIndex = backlogColumn.tasks.findIndex(t => t.id === taskId);
-                    if (taskIndex === -1) return state;
+                    if (taskIndex === -1) {
+                        console.log('Task not found in Backlog');
+                        return state;
+                    }
 
                     const taskToMove = { ...backlogColumn.tasks[taskIndex] };
+                    console.log('Moving task:', taskToMove);
 
                     const newColumns = state.columns.map(col => {
                         if (col.id === 'backlog') {
@@ -63,7 +72,6 @@ const useBoardStore = create(
                     return { columns: newColumns };
                 });
             },
-
             // Перемещение задачи из Ready в In Progress
             moveFromReadyToInProgress: (taskId) => {
                 set((state) => {

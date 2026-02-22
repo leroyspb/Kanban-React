@@ -13,11 +13,6 @@ const DesktopBoard = () => {
     const { columns, moveTask, moveColumn } = useBoardStore();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-    const handleClearStorage = () => {
-        localStorage.removeItem('kanban-board-storage');
-        window.location.reload(); // Перезагрузить страницу
-    };
-
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768);
@@ -82,14 +77,15 @@ const DesktopBoard = () => {
                         )}
                     </Droppable>
 
-                    <Footer
-                        activeTasks={activeTasks}
-                        finishedTasks={finishedTasks}
-                    />
+
                 </div>
             </DragDropContext>
 
             <TaskModal />
+            <Footer
+                activeTasks={activeTasks}
+                finishedTasks={finishedTasks}
+            />
         </>
     );
 };

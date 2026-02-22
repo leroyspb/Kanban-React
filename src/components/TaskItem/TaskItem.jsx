@@ -1,27 +1,22 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './TaskItem.module.css';
-import { FaGripVertical, FaTrash, FaEdit, FaEye } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 import useBoardStore from '../../store/boardStore';
-import useUIStore from '../../store/uiStore';
 
 const TaskItem = ({ task }) => {
+    const navigate = useNavigate();
     const { deleteTask } = useBoardStore();
-    const { openTaskModal } = useUIStore();
+
+    const handleView = () => {
+        navigate(`/tasks/${task.id}`);
+    };
 
     const handleDelete = (e) => {
-        e.stopPropagation();
+        e.stopPropagation(); // Останавливаем всплытие события, чтобы не открывалась карточка
         if (window.confirm('Удалить задачу?')) {
             deleteTask(task.id);
         }
-    };
-
-    const handleEdit = (e) => {
-        e.stopPropagation();
-        console.log('Edit task:', task.id);
-    };
-
-    const handleView = () => {
-        openTaskModal(task);
     };
 
     return (
@@ -29,8 +24,14 @@ const TaskItem = ({ task }) => {
             className={`${styles.taskItem} ${task.completed ? styles.completed : ''}`}
             onClick={handleView}
         >
-
             <span className={styles.taskTitle}>{task.title}</span>
+            <button
+                className={styles.deleteButton}
+                onClick={handleDelete}
+                title="Удалить задачу"
+            >
+                <FaTrash size={14} />
+            </button>
         </div>
     );
 };
